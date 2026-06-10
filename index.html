@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HidroVolt - Universidad de La Salle</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- FUENTES PREFERIDAS --- */
+        @font-face {
+            font-family: 'Showcard Gothic';
+            src: local('Showcard Gothic'), local('ShowcardGothic-Reg');
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: url('Portada.png'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #010a15;
+            font-family: 'Times New Roman', Times, serif;
+            color: white;
+            padding: 15px;
+        }
+
+        /* --- SISTEMA DE PARTÍCULAS DELICADO Y LENTO --- */
+        .particle {
+            position: fixed;
+            top: -40px;
+            pointer-events: none;
+            z-index: 1; 
+            animation: caer linear infinite;
+            user-select: none;
+        }
+
+        @keyframes caer {
+            to { transform: translateY(110vh) rotate(180deg); }
+        }
+
+        /* --- ANIMACIÓN DE FLOTACIÓN --- */
+        @keyframes flotarContenedor {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-12px); }
+            40%, 80% { transform: translateX(12px); }
+        }
+
+        .shake-anim { animation: shake 0.4s ease-in-out !important; }
+
+        /* --- BOTÓN DE SONIDO --- */
+        .sound-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0, 35, 70, 0.6);
+            border: 2px solid rgba(0, 255, 255, 0.6);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.2s, background-color 0.2s;
+            z-index: 100;
+        }
+        .sound-btn:hover { transform: scale(1.1); background-color: rgba(0, 50, 100, 0.8); }
+
+        /* --- CONTENEDORES PRINCIPALES --- */
+        .glass-container {
+            background-color: rgba(0, 35, 70, 0.7); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 35px 30px;
+            border-radius: 28px; 
+            box-shadow: 0 15px 35px rgba(0, 255, 255, 0.25), inset 0 0 15px rgba(0, 255, 255, 0.15); 
+            text-align: center;
+            width: 100%;
+            max-width: 440px;
+            border: 3px solid rgba(0, 255, 255, 0.6); 
+            z-index: 10; 
+        }
+
+        #loginBox { animation: flotarContenedor 4s ease-in-out infinite; max-width: 380px; }
+
+        /* --- TÍTULOS --- */
+        .lasalle-title {
+            font-family: 'Showcard Gothic', 'Luckiest Guy', Impact, sans-serif;
+            font-size: 16px;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            filter: drop-shadow(2px 2px 0px #042f2e);
+        }
+
+        h1, h2 {
+            font-family: 'Showcard Gothic', 'Luckiest Guy', Impact, sans-serif; 
+            font-weight: normal;
+            background: linear-gradient(180deg, #5eead4 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+            filter: drop-shadow(3px 3px 0px #042f2e); 
+        }
+        
+        h1 { font-size: 48px; margin-bottom: 8px; }
+        h2 { font-size: 28px; margin-bottom: 15px; }
+
+        .slogan {
+            font-size: 15px;
+            color: #e0f2fe;
+            font-weight: bold;
+            margin-bottom: 35px;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        /* --- INPUTS PORTADA --- */
+        .input-wrapper { position: relative; margin-bottom: 22px; }
+        .input-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 20px; z-index: 2; }
+        
+        input {
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: bold;
+            width: 100%;
+            padding: 16px 16px 16px 50px; 
+            background-color: rgba(0, 20, 40, 0.7); 
+            border: 2px solid rgba(0, 255, 255, 0.3); 
+            border-radius: 18px; 
+            font-size: 18px; 
+            outline: none;
+            color: #ffffff; 
+            transition: all 0.3s ease;
+        }
+        input::placeholder { color: rgba(255, 255, 255, 0.4); }
+        input:focus {
+            border-color: #5eead4; 
+            background-color: rgba(0, 30, 60, 0.9);
+            box-shadow: 0 0 15px rgba(94, 234, 212, 0.6);
+        }
+        .input-error { border-color: #f43f5e !important; box-shadow: 0 0 15px rgba(244, 63, 94, 0.6) !important; background-color: rgba(50, 10, 20, 0.8) !important; }
+
+        /* --- BOTÓN PRINCIPAL Y NAVEGACIÓN --- */
+        .btn-primary {
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: bold;
+            text-transform: uppercase;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(180deg, #06b6d4 0%, #0891b2 100%);
+            color: #ffffff; 
+            border: none;
+            border-radius: 18px; 
+            font-size: 22px; 
+            cursor: pointer;
+            letter-spacing: 1px;
+            border-bottom: 5px solid #0e7490; 
+            box-shadow: 0 5px 20px rgba(6, 182, 212, 0.4);
+            transition: all 0.1s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 14px; 
+        }
+        .btn-primary:hover {
+            background: linear-gradient(180deg, #22d3ee 0%, #06b6d4 100%);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.6);
+        }
+        .btn-primary:active { transform: translateY(4px); border-bottom: 1px solid #0e7490; }
+
+        /* --- PANTALLA CARGA --- */
+        .loading-screen {
+            display: none; 
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            text-align: center;
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
+        }
+
+        .progress-container-load {
+            width: 100%; height: 26px;
+            background-color: rgba(0, 20, 40, 0.85);
+            border: 2px solid #06b6d4; border-radius: 13px;
+            padding: 3px; box-shadow: 0 0 25px rgba(6, 182, 212, 0.4), inset 0 0 10px rgba(0,0,0,0.5);
+            margin-bottom: 30px; overflow: hidden;
+        }
+
+        .progress-bar-load { height: 100%; width: 0%; border-radius: 9px; }
+
+        @keyframes llenarYMutarBarra {
+            0% { width: 0%; background: linear-gradient(90deg, #06b6d4 0%, #00d2ff 100%); box-shadow: 0 0 12px #00d2ff; }
+            50% { width: 50%; background: linear-gradient(90deg, #06b6d4 0%, #eab308 100%); box-shadow: 0 0 18px #eab308; }
+            100% { width: 100%; background: linear-gradient(90deg, #06b6d4 0%, #f97316 100%); box-shadow: 0 0 25px #f97316; }
+        }
+
+        .loading-text {
+            font-family: 'Showcard Gothic', 'Luckiest Guy', sans-serif; font-size: 22px; color: #ffffff;
+            letter-spacing: 2px; text-shadow: 0 0 10px rgba(6, 182, 212, 0.8);
+            animation: parpadeo 1.5s infinite; background-color: rgba(0, 12, 26, 0.85); 
+            backdrop-filter: blur(5px); padding: 14px 28px; border-radius: 16px;
+            border: 1px solid rgba(6, 182, 212, 0.35); box-shadow: 0 8px 24px rgba(0,0,0,0.6); display: inline-block;
+        }
+
+        @keyframes parpadeo { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+        /* --- ESTILOS DEL JUEGO --- */
+        #gameArea { display: none; }
+        #resultsArea { display: none; }
+        
+        .game-progress-bg {
+            width: 100%; height: 12px; background-color: rgba(0, 20, 40, 0.7);
+            border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(0, 255, 255, 0.3); overflow: hidden;
+        }
+        .game-progress-fill {
+            height: 100%; width: 0%; border-radius: 10px;
+            background: linear-gradient(90deg, #06b6d4, #22c55e); transition: width 0.4s ease;
+        }
+
+        .mechanic-badge {
+            font-family: 'Showcard Gothic', Impact, sans-serif;
+            display: inline-block; padding: 6px 16px; background: rgba(0, 20, 40, 0.8);
+            border: 1px solid #06b6d4; border-radius: 20px; font-size: 0.85rem; color: #5eead4;
+            margin-bottom: 15px; letter-spacing: 1px;
+        }
+
+        .question-text {
+            font-size: 1.25rem; font-weight: bold; line-height: 1.4; color: white;
+            margin-bottom: 18px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        }
+
+        .fill-blank {
+            display: inline-block; min-width: 80px; border-bottom: 3px solid #5eead4; color: #5eead4; text-align: center;
+        }
+
+        .image-box {
+            background: rgba(0, 0, 0, 0.5); border-radius: 16px; padding: 6px;
+            margin-bottom: 20px; border: 1px solid rgba(0, 255, 255, 0.4);
+        }
+        .image-box img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px; }
+
+        /* Botones de Opciones */
+        .options-container { display: flex; flex-direction: column; gap: 12px; }
+        
+        .option-btn {
+            font-family: 'Times New Roman', Times, serif; font-size: 1.1rem; font-weight: bold;
+            background: rgba(0, 20, 40, 0.8); border: 2px solid rgba(0, 255, 255, 0.4);
+            padding: 14px 18px; border-radius: 16px; color: white; text-align: left;
+            cursor: pointer; transition: all 0.2s ease;
+        }
+        .option-btn:hover:not(:disabled) {
+            background: rgba(6, 182, 212, 0.2); border-color: #5eead4; transform: scale(1.02);
+        }
+
+        /* Layout Rápido y Verdadero/Falso */
+        .layout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        
+        .btn-rapid {
+            font-family: 'Showcard Gothic', Impact, sans-serif;
+            padding: 20px 10px; font-size: 1.2rem; color: white; border: none; border-radius: 16px; cursor: pointer; transition: all 0.2s ease;
+        }
+        .btn-rapid:hover:not(:disabled) { transform: translateY(-3px); filter: brightness(1.2); }
+        .btn-rapid.green { background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4); }
+        .btn-rapid.red { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
+
+        .btn-tf {
+            font-family: 'Showcard Gothic', Impact, sans-serif; padding: 18px 10px; font-size: 1.2rem;
+            background: rgba(0, 20, 40, 0.8); border: 2px solid #06b6d4; color: #5eead4;
+            border-radius: 16px; cursor: pointer; transition: all 0.2s ease;
+        }
+        .btn-tf:hover:not(:disabled) { background: #06b6d4; color: white; }
+
+        /* --- CLASES DE RETROALIMENTACIÓN --- */
+        .choice-correct {
+            background: #16a34a !important; border-color: #22c55e !important; color: white !important;
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+        }
+        .choice-incorrect {
+            background: #dc2626 !important; border-color: #ef4444 !important; color: white !important;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+        }
+
+        .feedback-box {
+            margin-top: 15px; padding: 15px; border-radius: 16px; font-size: 1.1rem; line-height: 1.4;
+            text-align: left; display: none; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+        .feedback-box.correct-theme { background: rgba(22, 163, 74, 0.25); border: 2px solid #22c55e; color: #4ade80; }
+        .feedback-box.incorrect-theme { background: rgba(220, 38, 38, 0.25); border: 2px solid #ef4444; color: #f87171; }
+        
+        .feedback-title { font-family: 'Showcard Gothic', sans-serif; font-size: 1.15rem; margin-bottom: 4px; letter-spacing: 0.5px; }
+
+        /* --- RESULTADOS --- */
+        .score-circle {
+            font-family: 'Showcard Gothic', Impact, sans-serif;
+            width: 140px; height: 140px; line-height: 130px; margin: 20px auto;
+            background: rgba(0, 20, 40, 0.8); border-radius: 50%; font-size: 3rem; color: #5eead4;
+            border: 5px solid #22c55e; box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
+        }
+        
+        #upload-status {
+            font-family: 'Times New Roman', Times, serif; font-weight: bold; font-size: 1rem;
+            padding: 12px 20px; border-radius: 14px; margin-top: 20px; display: inline-block;
+            background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* --- DECORACIONES PORTADA --- */
+        .logo-badge-container {
+            position: fixed; bottom: 20px; right: 20px; background-color: rgba(255, 255, 255, 0.92); 
+            backdrop-filter: blur(8px); padding: 3px 6px; border-radius: 8px; border: 1px solid rgba(0, 255, 255, 0.4); 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); z-index: 10;
+        }
+        .logo-badge-container img { width: 60px; height: auto; display: block; }
+        .footer-credits {
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); color: rgba(255, 255, 255, 0.6);
+            font-size: 13px; font-weight: bold; letter-spacing: 1px; text-shadow: 1px 1px 2px rgba(0,0,0,0.6); z-index: 10; white-space: nowrap;
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 40px; }
+            .logo-badge-container { bottom: 12px; right: 12px; }
+            .logo-badge-container img { width: 45px; }
+            .footer-credits { font-size: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- AUDIO UNIFICADO -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="Musica.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="sound-btn" id="soundBtn" onclick="toggleMúsica()">🔊</div>
+
+    <!-- PANTALLA 1: LOGIN BOX -->
+    <div class="glass-container" id="loginBox">
+        <div class="lasalle-title">Universidad de La Salle</div>
+        <h1>HidroVolt</h1> 
+        <div class="slogan">¡Cada gota cuenta, cada vatio suma!</div>
+        
+        <div class="input-wrapper">
+            <span class="input-icon">👤</span>
+            <input type="text" id="fullName" placeholder="Nombre Completo" maxlength="50" oninput="this.classList.remove('input-error')">
+        </div>
+
+        <div class="input-wrapper">
+            <span class="input-icon">💼</span>
+            <input type="text" id="department" placeholder="Dependencia / Área" maxlength="40" oninput="this.classList.remove('input-error')">
+        </div>
+        
+        <button class="btn-primary" onclick="iniciarCarga(event)">
+            <span>💧</span> Ingresar <span>⚡</span>
+        </button>
+    </div>
+
+    <!-- PANTALLA 2: LOADING -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="progress-container-load">
+            <div class="progress-bar-load" id="progressBar"></div>
+        </div>
+        <div class="loading-text">INICIANDO SISTEMA HIDROVOLT...</div>
+    </div>
+
+    <!-- PANTALLA 3: ÁREA DE JUEGO -->
+    <div class="glass-container" id="gameArea">
+        <div class="game-progress-bg">
+            <div id="game-progress" class="game-progress-fill"></div>
+        </div>
+        
+        <span id="mechanic-badge" class="mechanic-badge">MÉTODO</span>
+        <div id="question-text" class="question-text">Cargando...</div>
+        
+        <div class="image-box">
+            <img id="question-image" src="" alt="Desafío Ambiental">
+        </div>
+
+        <!-- Contenedor de opciones -->
+        <div id="options-container"></div>
+
+        <!-- RECUADRO DE EXPLICACIÓN -->
+        <div id="feedback-box" class="feedback-box">
+            <div id="feedback-title" class="feedback-title"></div>
+            <div id="feedback-text"></div>
+        </div>
+
+        <!-- BOTÓN DE AVANCE -->
+        <button id="next-btn" class="btn-primary" style="display:none; margin-top: 18px; padding: 14px; font-size: 18px;" onclick="avanzarFlujo()">
+            Siguiente Pregunta ➡️
+        </button>
+    </div>
+
+    <!-- PANTALLA 4: RESULTADOS -->
+    <div class="glass-container" id="resultsArea">
+        <h2>🎉 ¡Reto Completado!</h2>
+        <p style="font-size: 1.2rem; color: #e0f2fe;">Agente: <span id="end-player-name" style="color: #5eead4; font-weight: bold;"></span></p>
+        
+        <div class="score-circle"><span id="correct-count">0</span>/10</div>
+        
+        <p id="score-message" style="font-size: 1.15rem; line-height: 1.4; color: white;"></p>
+        
+        <hr style="margin: 25px 0; border: 0; border-top: 1px dashed rgba(0, 255, 255, 0.3);">
+        <div id="upload-status">⏳ Transmitiendo datos a la red Lasallista...</div>
+    </div>
+
+    <div class="logo-badge-container"><img src="Logo.png" alt="Logo"></div>
+    <div class="footer-credits">© 2026 HidroVolt · Proyecto Ambiental · Nicolás Cárdenas González</div>
+
+    <script>
+        // --- ENLACE DE LA BASE DE DATOS (REEMPLAZA AQUÍ) ---
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwuqU9xbwueui9HUkPr-b4vgCdWlHbv4r4OVV77jwtkb1BJijnWHeQkzRti9m07LLhu/exec";
+
+        // --- VARIABLES GENERALES ---
+        let playerName = "";
+        let playerArea = "";
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let yaRespondio = false; 
+
+        const musica = document.getElementById('bgMusic');
+        const botonSonido = document.getElementById('soundBtn');
+
+        // --- PREGUNTAS ACTUALIZADAS CON EXPLICACIONES ---
+        const questionsDatabase = [
+            // AGUA
+            { 
+                badge: "💧 Acción Práctica | Selecciona", type: "select", 
+                question: "Si encuentras una fuga de agua en el campus, la mejor ruta de acción es:", 
+                image: "https://limpiezasmorgasl.com/wp-content/uploads/2018/08/localizar-fugas-de-agua.jpg", 
+                options: ["Escanear el código QR de reporte", "Ignorarlo, alguien más lo verá", "Contarle a un colega y olvidarlo"], 
+                correctIndex: 0,
+                explanation: "El código QR alerta directamente al equipo de mantenimiento para detener el desperdicio de forma inmediata."
+            },
+            { 
+                badge: "💧 Toca Rápido | Hábitos", type: "rapid", 
+                question: "Cerrar la llave del lavamanos mientras te estás cepillando los dientes significa:", 
+                image: "https://clinicajuliansaiz.com/wp-content/uploads/2024/09/AdobeStock_602210141-scaled.jpeg", 
+                options: ["👍 ¡AHORRO!", "❌ DESPERDICIO"], 
+                correctIndex: 0,
+                explanation: "Cerrar la llave durante el cepillado evita el gasto inútil de hasta 12 litros de agua por minuto. ¡Un cambio pequeño con un impacto gigante!"
+            },
+            { 
+                badge: "💧 Completa la frase | Sanitarios", type: "fill", 
+                question: "Nuestros sanitarios tienen sistema de '{blank}'. Oprímelo una sola vez con suavidad.", 
+                image: "https://listocorona.vtexassets.com/arquivos/ids/171554-1000-1000?v=639159514514600000&width=1000&height=1000&aspect=true", 
+                options: ["Push", "Palanca de jalón", "Sensor automático"], 
+                correctIndex: 0,
+                explanation: "Los botones de tipo 'Push' controlan el volumen exacto de agua por descarga. Accionarlo bien previene antes los atascos y pérdidas innecesarias."
+            },
+            { 
+                badge: "💧 Verdadero o Falso | Jardines", type: "tf", 
+                question: "Regar las plantas en horas de la tarde o noche evita pérdidas de agua por evaporación solar.", 
+                image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&q=80&w=500", 
+                options: ["VERDADERO", "FALSO"], 
+                correctIndex: 0,
+                explanation: "Al regar sin la radiación directa del sol, la tierra retiene la humedad por mucho más tiempo y las raíces absorben el 100% del agua."
+            },
+            { 
+                badge: "💧 Análisis Visual | Selecciona", type: "select", 
+                question: "Observa este grifo. ¿Qué problema crítico encuentras si lo dejas así mientras te enjabonas?", 
+                image: "https://i.postimg.cc/44v5MwhM/Imagen-1.jpg", 
+                options: ["Se desperdicia agua limpia innecesariamente", "Es correcto dejarlo fluir", "Ayuda a limpiar la tubería"], 
+                correctIndex: 0,
+                explanation: "Mientras te enjabonas las manos, la llave debe permanecer totalmente cerrada. Dejar correr el agua potable de esta forma es un derroche crítico."
+            },
+            
+            // ENERGÍA
+            { 
+                badge: "⚡ Acción Práctica | Selecciona", type: "select", 
+                question: "¿Qué haces si encuentras una oficina vacía con las luces prendidas?", 
+                image: "https://megalamparas.com.gt/wp-content/uploads/2019/09/Iluminacion-para-oficinas.jpg", 
+                options: ["Apagarlas de inmediato", "Dejarlas prendidas", "Esperar al personal de aseo"], 
+                correctIndex: 0,
+                explanation: "Apagar la iluminación en áreas que nadie está usando reduce de golpe el consumo eléctrico fantasma y baja las emisiones de carbono de la universidad."
+            },
+            { 
+                badge: "⚡ Toca Rápido | Equipos", type: "rapid", 
+                question: "Mantener cargadores de celulares conectados a los enchufes sin ningún celular conectado es:", 
+                image: "https://estaticos.elcolombiano.com/binrepository/780x585/0c10/780d565/none/11101/CABV/a20200624t045227-m-10-95-1-56-u3_43124709_20230824143152.jpg", 
+                options: ["👍 ¡AHORRO!", "❌ DESPERDICIO"], 
+                correctIndex: 1,
+                explanation: "Esto genera el llamado 'consumo vampiro'. Aunque no tengan un dispositivo enlazado, los transformadores internos siguen gastando vatios de forma pasiva."
+            },
+            { 
+                badge: "⚡ Completa la frase | Oficina", type: "fill", 
+                question: "Si te retiras de tu puesto administrativo por una hora, debes poner el monitor en modo '{blank}' para cortar el gasto.", 
+                image: "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&q=80&w=500", 
+                options: ["Suspensión", "Alto Rendimiento", "Salvapantallas"], 
+                correctIndex: 0,
+                explanation: "El modo 'Suspensión' apaga la pantalla y reduce el uso de energía del computador al mínimo (hasta un 90% menos) protegiendo tus sesiones de trabajo abiertas."
+            },
+            { 
+                badge: "⚡ Verdadero o Falso | Clima", type: "tf", 
+                question: "Encender el sistema de aire acondicionado manteniendo las ventanas abiertas mejora la eficiencia energética.", 
+                image: "https://estaticos-cdn.prensaiberica.es/clip/42feb3af-7364-474c-9ae2-0ddbd0c322c1_alta-libre-aspect-ratio_default_0.jpg", 
+                options: ["VERDADERO", "FALSO"], 
+                correctIndex: 1,
+                explanation: "Si abres las ventanas, entra calor del exterior y el aire acondicionado tiene que trabajar al doble de su capacidad para enfriar, multiplicando el consumo eléctrico."
+            },
+            { 
+                badge: "⚡ Movilidad | Selecciona", type: "select", 
+                question: "Si debes moverte al piso inmediatamente superior (ej. del 1 al 2), la opción Eco-Eficiente es:", 
+                image: "https://www.condominiosverdes.com.br/wp-content/uploads/2017/08/escada-elevador-condominio.jpg", 
+                options: ["Usar las Industrial de escaleras fijas (ahorras energía)", "Llamar el ascensor mecánico", "Pedir que bajen a buscarte"], 
+                correctIndex: 0,
+                explanation: "El ascensor es uno de los elementos que más energía demanda. Usar las escaleras para trayectos cortos corta ese gasto eléctrico y activa tu salud física."
+            }
+        ];
+
+        // Precarga de imágenes
+        questionsDatabase.forEach(q => { const img = new Image(); img.src = q.image; });
+
+        // --- SISTEMA DE PARTÍCULAS ---
+        function crearParticula() {
+            const iconos = ['💧', '⚡'];
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.innerText = iconos[Math.floor(Math.random() * iconos.length)];
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.fontSize = (Math.random() * 10 + 20) + 'px'; 
+            p.style.opacity = Math.random() * 0.2 + 0.5; 
+            p.style.animationDuration = (Math.random() * 5 + 8) + 's'; 
+            document.body.appendChild(p);
+            setTimeout(() => { p.remove(); }, 13000);
+        }
+        setInterval(crearParticula, 900);
+
+        // --- AUDIO INICIAL SEAMLESS ---
+        function iniciarMusicaConClic() {
+            if (musica.paused) { musica.play().then(() => { botonSonido.innerText = "🔊"; }).catch(e => console.log("Permiso pendiente.")); }
+            document.removeEventListener('click', iniciarMusicaConClic);
+        }
+        document.addEventListener('click', iniciarMusicaConClic);
+
+        function toggleMúsica() {
+            if (musica.paused) { musica.play().then(() => { botonSonido.innerText = "🔊"; }); } 
+            else { musica.pause(); botonSonido.innerText = "🔇"; }
+        }
+
+        // --- TRANSICIÓN A CARGA ---
+        function iniciarCarga(event) {
+            if(event) event.stopPropagation();
+            document.removeEventListener('click', iniciarMusicaConClic);
+
+            const inputNombre = document.getElementById('fullName');
+            const inputDependencia = document.getElementById('department');
+
+            if(inputNombre.value.trim() === "" || inputDependencia.value.trim() === "") {
+                if(inputNombre.value.trim() === "") inputNombre.classList.add('input-error');
+                if(inputDependencia.value.trim() === "") inputDependencia.classList.add('input-error');
+                document.getElementById('loginBox').classList.add('shake-anim');
+                setTimeout(() => { document.getElementById('loginBox').classList.remove('shake-anim'); }, 400);
+                return; 
+            }
+
+            playerName = inputNombre.value.trim();
+            playerArea = inputDependencia.value.trim();
+
+            // NOTA: La música no se pausa, continúa sonando de fondo de manera ininterrumpida.
+            
+            document.getElementById('loginBox').style.display = 'none';
+            document.getElementById('loadingScreen').style.display = 'flex';
+            document.getElementById('progressBar').style.animation = 'llenarYMutarBarra 5s linear forwards';
+
+            setTimeout(() => {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('gameArea').style.display = 'block';
+                loadQuestion();
+            }, 5000);
+        }
+
+        // --- LÓGICA DEL JUEGO ---
+        function loadQuestion() {
+            yaRespondio = false; 
+            
+            document.getElementById('feedback-box').style.display = "none";
+            document.getElementById('next-btn').style.display = "none";
+
+            const q = questionsDatabase[currentQuestionIndex];
+            document.getElementById('game-progress').style.width = `${(currentQuestionIndex / questionsDatabase.length) * 100}%`;
+            document.getElementById('mechanic-badge').innerText = q.badge;
+            document.getElementById('question-image').src = q.image;
+
+            let questionHtml = q.question;
+            if (q.type === "fill") questionHtml = questionHtml.replace('{blank}', '<span class="fill-blank">_______</span>');
+            document.getElementById('question-text').innerHTML = questionHtml;
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = "";
+
+            if (q.type === "rapid") {
+                container.className = "layout-grid";
+                container.appendChild(createButton(q.options[0], "btn-rapid green", 0));
+                container.appendChild(createButton(q.options[1], "btn-rapid red", 1));
+            } else if (q.type === "tf") {
+                container.className = "layout-grid";
+                q.options.forEach((opt, idx) => container.appendChild(createButton(opt, "btn-tf", idx)));
+            } else {
+                container.className = "options-container";
+                q.options.forEach((opt, idx) => container.appendChild(createButton(opt, "option-btn", idx)));
+            }
+        }
+
+        function createButton(text, className, index) {
+            const btn = document.createElement('button');
+            btn.className = className;
+            btn.innerText = text;
+            btn.onclick = () => selectOption(index);
+            return btn;
+        }
+
+        function selectOption(selectedIndex) {
+            if(yaRespondio) return; 
+            yaRespondio = true;
+
+            const q = questionsDatabase[currentQuestionIndex];
+            const isCorrect = (selectedIndex === q.correctIndex);
+
+            if (isCorrect) score++;
+
+            const container = document.getElementById('options-container');
+            const botones = container.children;
+
+            for (let i = 0; i < botones.length; i++) {
+                botones[i].disabled = true; 
+                if (i === q.correctIndex) {
+                    botones[i].classList.add('choice-correct'); 
+                } else if (i === selectedIndex) {
+                    botones[i].classList.add('choice-incorrect'); 
+                }
+            }
+
+            const feedbackBox = document.getElementById('feedback-box');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackText = document.getElementById('feedback-text');
+
+            if (isCorrect) {
+                feedbackBox.className = "feedback-box correct-theme";
+                feedbackTitle.innerText = "🎉 ¡EXCELENTE, QUEDÓ BIEN!";
+            } else {
+                feedbackBox.className = "feedback-box incorrect-theme";
+                feedbackTitle.innerText = "❌ ¡HUY, QUEDÓ MAL!";
+            }
+            
+            feedbackText.innerText = q.explanation;
+            feedbackBox.style.display = "block";
+
+            document.getElementById('next-btn').style.display = "block";
+        }
+
+        function avanzarFlujo() {
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questionsDatabase.length) {
+                loadQuestion();
+            } else {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            document.getElementById('game-progress').style.width = "100%";
+            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('resultsArea').style.display = 'block';
+
+            document.getElementById('end-player-name').innerText = playerName + " (" + playerArea + ")";
+            document.getElementById('correct-count').innerText = score;
+
+            let message = "";
+            if (score >= 9) message = "🏆 ¡Excelente Eco-Guardián! Dominas el sistema HidroVolt a la perfección.";
+            else if (score >= 6) message = "🏅 ¡Buen trabajo! Conoces la base, pero podemos mejorar la eficiencia en el campus.";
+            else message = "👍 ¡Gracias por participar! Recuerda: ¡Cada gota cuenta y cada vatio suma!";
+            document.getElementById('score-message').innerText = message;
+
+            const payload = { 
+                name: playerName, 
+                area: playerArea, 
+                score: score 
+            };
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors", 
+                headers: { "Content-Type": "application/json" }, 
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                const status = document.getElementById('upload-status');
+                status.innerHTML = "✅ ¡Datos sincronizados con HidroVolt Core!";
+                status.style.color = "#5eead4";
+            })
+            .catch((err) => {
+                console.error("Fallo de red:", err);
+                const status = document.getElementById('upload-status');
+                status.innerHTML = "⚠️ Error de red. Intenta de nuevo más tarde.";
+                status.style.color = "#f43f5e";
+            });
+        }
+    </script>
+</body>
+</html>
